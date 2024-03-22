@@ -95,10 +95,10 @@ function App() {
         <ListBox>
           <BooksList booksData={booksData} />
         </ListBox>
-        <StudiedList>
+        <ListBox>
           <BooksReadSummary />
           <BooksReadList booksReadData={booksReadData} />
-        </StudiedList>
+        </ListBox>
       </Main>
     </>
   );
