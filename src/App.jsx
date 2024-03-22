@@ -11,8 +11,8 @@ import { formatBookResponse } from "./services/FormatBookResponse";
 import axios from "axios";
 import Loading from "./components/Loading";
 import ErrorMessage from "./components/ErrorMessage";
+import useDebounce from "./hooks/useDebounce";
 const key = import.meta.env.VITE_API_KEY;
-
 
 // Helper function to fetch books
 const fetchBooks = async (query, setBooksData, setIsLoading, setError) => {
@@ -26,7 +26,8 @@ const fetchBooks = async (query, setBooksData, setIsLoading, setError) => {
     const response = await axios.get(
       `https://www.googleapis.com/books/v1/volumes?q=${query}&key=${key}`
     );
-    if (response.data && !response.data.items?.length)  throw new Error("No Books Data Available");
+    if (response.data && !response.data.items?.length)
+      throw new Error("No Books Data Available");
     setBooksData(formatBookResponse(response.data));
     setError("");
   } catch (error) {
@@ -43,11 +44,11 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
-
+  const debouncedQuery = useDebounce(query, 200);
   useEffect(() => {
     setError("");
-    fetchBooks(query, setBooksData, setIsLoading, setError);
-  }, [query]);
+    fetchBooks(debouncedQuery, setBooksData, setIsLoading, setError);
+  }, [debouncedQuery]);
 
   return (
     <>

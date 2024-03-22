@@ -1,3 +1,4 @@
+
 /* eslint-disable react/prop-types */
 const Navbar = ({ booksData, query, setQuery }) => {
   return (
