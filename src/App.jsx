@@ -11,41 +11,47 @@ import { formatBookResponse } from "./services/FormatBookResponse";
 import axios from "axios";
 import Loading from "./components/Loading";
 import ErrorMessage from "./components/ErrorMessage";
+const key = import.meta.env.VITE_API_KEY;
+
+
+// Helper function to fetch books
+const fetchBooks = async (query, setBooksData, setIsLoading, setError) => {
+  if (!query || query.length < 4) {
+    setBooksData([]);
+    setIsLoading(false);
+    return;
+  }
+  setIsLoading(true);
+  try {
+    const response = await axios.get(
+      `https://www.googleapis.com/books/v1/volumes?q=${query}&key=${key}`
+    );
+    if (response.data && !response.data.items?.length)  throw new Error("No Books Data Available");
+    setBooksData(formatBookResponse(response.data));
+    setError("");
+  } catch (error) {
+    setError(error?.message);
+    console.error(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
 function App() {
   const [booksData, setBooksData] = useState([]);
   const [booksReadData, setBooksReadData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const key = import.meta.env.VITE_API_KEY;
-  const q = "hope+love";
-  // console.log(key);
-  useEffect(() => {
-    const fetchBooks = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axios.get(
-          `https://www.googleapis.com/books/v1/volumes?q=${q}&key=${key}`
-        );
-        if (response.data && !response.data.items?.length) {
-          throw new Error("No Books Data Available");
-        }
-        setBooksData(formatBookResponse(response.data));
-        setError("");
-      } catch (error) {
-        setError(error?.message);
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const [query, setQuery] = useState("");
 
-    fetchBooks();
-  }, [key, q]);
-  console.log(booksData);
+  useEffect(() => {
+    setError("");
+    fetchBooks(query, setBooksData, setIsLoading, setError);
+  }, [query]);
+
   return (
     <>
-      <Navbar booksData={booksData} />
+      <Navbar booksData={booksData} query={query} setQuery={setQuery} />
       <Main>
         <ListBox>
           {isLoading && <Loading />}
