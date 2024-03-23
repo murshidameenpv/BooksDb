@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
-const Star = ({ onRate, isFull, onHoverIn, onHoverOut }) => {
+const Star = ({ onRate, isFull, onHoverIn, onHoverOut ,color}) => {
   return (
     <span onClick={onRate} onMouseEnter={onHoverIn} onMouseLeave={onHoverOut}>
       {isFull ? (
         <svg
-          className="w-5 h-5 text-yellow-600 ms-1"
+          className={`w-5 h-5 ${color} ms-1`}
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"

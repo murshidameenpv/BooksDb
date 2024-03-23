@@ -9,6 +9,7 @@ import StarRating from "./StarRating";
 const BookDetails = ({ selectedId, handleBack }) => {
   const [bookDetails, setBookDetails] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [rating, setRating] = useState(0);
   useEffect(() => {
     const getBookDetails = async () => {
       setBookDetails("");
@@ -60,6 +61,8 @@ const BookDetails = ({ selectedId, handleBack }) => {
           </div>
           <div>Rate Book:</div>
           <StarRating />
+            <StarRating maxRating={10} color={"text-pink-700"} onSetRating={setRating} />
+          <div>The Book Has {rating} Ratings</div>
         </div>
       )}
     </div>
