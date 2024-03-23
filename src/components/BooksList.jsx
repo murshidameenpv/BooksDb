@@ -8,9 +8,9 @@ const BooksList = ({ booksData, handleSelectedId }) => {
       <ul className="p-0 m-0">
         {booksData.map((book) => (
           <li
-            key={book.isbn}
+            key={book.id}
             className="flex gap-4 my-2"
-            onClick={() => handleSelectedId(book.isbn)}
+            onClick={() => handleSelectedId(book.id)}
           >
             <img
               src={book.image || noImageUrl}

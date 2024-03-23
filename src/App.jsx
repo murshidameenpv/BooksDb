@@ -17,7 +17,7 @@ const key = import.meta.env.VITE_API_KEY;
 
 // Helper function to fetch books
 const fetchBooks = async (query, setBooksData, setIsLoading, setError) => {
-  if (!query || query.length < 4) {
+  if (!query || query.length < 3) {
     setBooksData([]);
     setIsLoading(false);
     return;
@@ -54,6 +54,7 @@ function App() {
   }, [debouncedQuery]);
 
   const handleSelectedId = (id) => { 
+    // debugger;
     setSelectedId((selectedId)=>(id===selectedId) ? "" : id)
   }; 
   const handleBack = () => {
