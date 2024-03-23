@@ -12,7 +12,7 @@ export const formatBookResponse = (booksData) => {
           ? item.volumeInfo.authors[0]
           : "Unknown",
         rating: item.volumeInfo?.averageRating || 5, // default rating is 5 if undefined
-        publishedDate: item.volumeInfo?.publishedDate
+        publishedYear: item.volumeInfo?.publishedDate
           ? item.volumeInfo.publishedDate.slice(0, 4)
           : "N/A", // get the year only
       };

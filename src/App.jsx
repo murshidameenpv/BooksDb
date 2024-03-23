@@ -12,6 +12,7 @@ import axios from "axios";
 import Loading from "./components/Loading";
 import ErrorMessage from "./components/ErrorMessage";
 import useDebounce from "./hooks/useDebounce";
+import BookDetails from "./components/BookDetails";
 const key = import.meta.env.VITE_API_KEY;
 
 // Helper function to fetch books
@@ -45,23 +46,42 @@ function App() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 200);
+  const [selectedId, setSelectedId] = useState("");
+
   useEffect(() => {
     setError("");
     fetchBooks(debouncedQuery, setBooksData, setIsLoading, setError);
   }, [debouncedQuery]);
 
+  const handleSelectedId = (id) => { 
+    setSelectedId((selectedId)=>(id===selectedId) ? "" : id)
+  }; 
+  const handleBack = () => {
+   setSelectedId("")
+ }
   return (
     <>
       <Navbar booksData={booksData} query={query} setQuery={setQuery} />
       <Main>
         <ListBox>
           {isLoading && <Loading />}
-          {!isLoading && !error && <BooksList booksData={booksData} />}
+          {!isLoading && !error && (
+            <BooksList
+              booksData={booksData}
+              handleSelectedId={handleSelectedId}
+            />
+          )}
           {error && <ErrorMessage message={error} />}
         </ListBox>
         <ListBox>
-          <BooksReadSummary />
-          <BooksReadList booksReadData={booksReadData} />
+          {selectedId ? (
+            <BookDetails selectedId={selectedId} handleBack={handleBack} />
+          ) : (
+            <>
+              <BooksReadSummary />
+              <BooksReadList booksReadData={booksReadData} />
+            </>
+          )}
         </ListBox>
       </Main>
     </>
