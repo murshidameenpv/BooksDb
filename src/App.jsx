@@ -54,12 +54,14 @@ function App() {
   }, [debouncedQuery]);
 
   const handleSelectedId = (id) => { 
-    // debugger;
     setSelectedId((selectedId)=>(id===selectedId) ? "" : id)
   }; 
   const handleBack = () => {
    setSelectedId("")
- }
+  }
+  const handleBookRead = (book) => {
+    setBooksReadData((prev) => [...prev, book]);
+  }
   return (
     <>
       <Navbar booksData={booksData} query={query} setQuery={setQuery} />
@@ -76,10 +78,14 @@ function App() {
         </ListBox>
         <ListBox>
           {selectedId ? (
-            <BookDetails selectedId={selectedId} handleBack={handleBack} />
+            <BookDetails
+              selectedId={selectedId}
+              handleBack={handleBack}
+              onBookRead={handleBookRead}
+            />
           ) : (
             <>
-              <BooksReadSummary />
+              <BooksReadSummary booksReadData={booksReadData} />
               <BooksReadList booksReadData={booksReadData} />
             </>
           )}

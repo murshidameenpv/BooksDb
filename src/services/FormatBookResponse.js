@@ -1,4 +1,4 @@
-const noImage = "../../public/noimg.webp"
+const noImage = "../../public/noimg.webp";
 
 export const formatBookResponse = (booksData) => {
   let books = [];
@@ -23,7 +23,7 @@ export const prepareBookObject = (item) => {
       : "N/A",
     image: item.volumeInfo?.imageLinks?.thumbnail || noImage,
     author: item.volumeInfo?.authors ? item.volumeInfo.authors[0] : "Unknown",
-    rating: item.volumeInfo?.averageRating || 5, // default rating is 5 if undefined
+    rating: item.volumeInfo?.averageRating || 0, // default rating is 5 if undefined
     publishedYear: item.volumeInfo?.publishedDate
       ? item.volumeInfo.publishedDate.slice(0, 4)
       : "N/A", // get the year only

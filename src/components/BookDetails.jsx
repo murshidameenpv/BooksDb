@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import axios from "axios";
@@ -5,15 +6,18 @@ import { useEffect, useState } from "react";
 import { prepareBookObject } from "../services/FormatBookResponse";
 import Loading from "./Loading";
 import StarRating from "./StarRating";
-
-const BookDetails = ({ selectedId, handleBack }) => {
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+const BookDetails = ({ selectedId, handleBack, onBookRead }) => {
   const [bookDetails, setBookDetails] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [rating, setRating] = useState(0);
+  const [userRating, setUserRating] = useState(0);
+  const [isBookRead, setIsBookRead] = useState(false);
   useEffect(() => {
     const getBookDetails = async () => {
       setBookDetails("");
       setIsLoading(true);
+      setIsBookRead(false);
       try {
         const response = await axios.get(
           `https://www.googleapis.com/books/v1/volumes/${selectedId}`
@@ -28,9 +32,15 @@ const BookDetails = ({ selectedId, handleBack }) => {
 
     getBookDetails();
   }, [selectedId]);
+  const handleBookRead = (book) => {
+    onBookRead({ ...book, userRating });
+    toast.success("Book added to read list!");
+    setIsBookRead(true);
+  };
 
   return (
     <div>
+      <ToastContainer />
       <div>
         <button onClick={handleBack} className="px-2 py-2 text-xl">
           🔙
@@ -61,8 +71,23 @@ const BookDetails = ({ selectedId, handleBack }) => {
           </div>
           <div>Rate Book:</div>
           <StarRating />
-            <StarRating maxRating={10} color={"text-pink-700"} onSetRating={setRating} />
-          <div>The Book Has {rating} Ratings</div>
+          <StarRating
+            maxRating={10}
+            color={"text-pink-700"}
+            onSetUserRating={setUserRating}
+          />
+          <div className="flex items-end justify-around gap-3">
+            <div>The Book Has {userRating} Ratings</div>
+            <div>
+              <button
+                onClick={() => handleBookRead(bookDetails)}
+                disabled={isBookRead}
+                className="px-3 text-white text-xs py-1 rounded-md bg-fuchsia-800 hover:bg-fuchsia-700"
+              >
+                Add To List
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
