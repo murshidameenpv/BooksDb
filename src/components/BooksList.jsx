@@ -1,6 +1,4 @@
 /* eslint-disable react/prop-types */
-const noImageUrl =
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png";
 
 const BooksList = ({ booksData, handleSelectedId }) => {
   return (
@@ -13,7 +11,7 @@ const BooksList = ({ booksData, handleSelectedId }) => {
             onClick={() => handleSelectedId(book.id)}
           >
             <img
-              src={book.image || noImageUrl}
+              src={book.image}
               alt="img"
               className="w-16 h-24"
             />

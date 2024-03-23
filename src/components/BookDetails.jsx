@@ -1,23 +1,31 @@
 /* eslint-disable react/prop-types */
 
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { prepareBookObject } from "../services/FormatBookResponse";
+import Loading from "./Loading";
 
 const BookDetails = ({ selectedId, handleBack }) => {
-  const getBookDetails = async () => {
-    try {
-      const response = await axios.get(
-        `https://www.googleapis.com/books/v1/volumes/${selectedId}`
-      );
-      console.log(prepareBookObject(response.data));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const [bookDetails, setBookDetails] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
+    const getBookDetails = async () => {
+      setBookDetails("")
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `https://www.googleapis.com/books/v1/volumes/${selectedId}`
+        );
+        setBookDetails(prepareBookObject(response.data));
+        setIsLoading(false);
+      } catch (error) {
+        console.error(error);
+        setIsLoading(false);
+      }
+    };
+
     getBookDetails();
-  }, []);
+  }, [selectedId]);
 
   return (
     <div>
@@ -26,7 +34,29 @@ const BookDetails = ({ selectedId, handleBack }) => {
           🔙
         </button>
       </div>
-      {selectedId}
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div className="flex items-start mx-2 gap-3 space-x-2 p-1">
+          <div className="">
+            <img
+              src={bookDetails.image}
+              alt={bookDetails.title || "Book cover"}
+            />
+          </div>
+          <div>
+            <h2 className="font-semibold text-xl">{bookDetails.title}</h2>
+            <h3 className="font-extrabold text-sm italic py-2 px-3">
+              {bookDetails.subTitle}
+            </h3>
+            <ul className="m-0 text-sm my-2 py-2 px-3 font-medium">
+              <li>Year : {bookDetails.publishedYear}</li>
+              <li>Author : {bookDetails.author}</li>
+              <li>ISBN : {bookDetails.isbn}</li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
