@@ -8,16 +8,16 @@ import Loading from "./Loading";
 import StarRating from "./StarRating";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const BookDetails = ({ selectedId, handleBack, onBookRead }) => {
+const BookDetails = ({ selectedId, handleBack, onBookRead, booksReadData }) => {
   const [bookDetails, setBookDetails] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
-  const [isBookRead, setIsBookRead] = useState(false);
+  const isRated = booksReadData.map((book) => book.id).includes(selectedId);
+  const ratedBook = booksReadData.find((book) => book.id === selectedId);
   useEffect(() => {
     const getBookDetails = async () => {
       setBookDetails("");
       setIsLoading(true);
-      setIsBookRead(false);
       try {
         const response = await axios.get(
           `https://www.googleapis.com/books/v1/volumes/${selectedId}`
@@ -35,7 +35,6 @@ const BookDetails = ({ selectedId, handleBack, onBookRead }) => {
   const handleBookRead = (book) => {
     onBookRead({ ...book, userRating });
     toast.success("Book added to read list!");
-    setIsBookRead(true);
   };
 
   return (
@@ -71,23 +70,32 @@ const BookDetails = ({ selectedId, handleBack, onBookRead }) => {
           </div>
           <div>Rate Book:</div>
           <StarRating />
-          <StarRating
-            maxRating={10}
-            color={"text-pink-700"}
-            onSetUserRating={setUserRating}
-          />
-          <div className="flex items-end justify-around gap-3">
-            <div>The Book Has {userRating} Ratings</div>
-            <div>
-              <button
-                onClick={() => handleBookRead(bookDetails)}
-                disabled={isBookRead}
-                className="px-3 text-white text-xs py-1 rounded-md bg-fuchsia-800 hover:bg-fuchsia-700"
-              >
-                Add To List
-              </button>
-            </div>
-          </div>
+          {isRated ? (
+            <p className="italic font-semibold text-sm">
+              You Already Rated Rated This Book
+            </p>
+          ) : (
+            <>
+              <StarRating
+                maxRating={10}
+                color={"text-pink-700"}
+                onSetUserRating={setUserRating}
+              />
+              <div className="flex items-end justify-around gap-3">
+                <div>The Book Has {userRating} Ratings</div>
+                <div>
+                  {userRating > 0 && (
+                    <button
+                      onClick={() => handleBookRead(bookDetails)}
+                      className="px-3 text-white text-xs py-1 rounded-md bg-fuchsia-800 hover:bg-fuchsia-700"
+                    >
+                      Add To List
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
