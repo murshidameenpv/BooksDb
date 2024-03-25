@@ -14,7 +14,7 @@ const BookDetails = ({ selectedId, handleBack, onBookRead, booksReadData }) => {
   const [userRating, setUserRating] = useState(0);
   const isRated = booksReadData.map((book) => book.id).includes(selectedId);
   const ratedBook = booksReadData.find((book) => book.id === selectedId);
-  console.log(ratedBook);
+  // console.log(ratedBook);
   useEffect(() => {
     const getBookDetails = async () => {
       setBookDetails("");
@@ -33,6 +33,14 @@ const BookDetails = ({ selectedId, handleBack, onBookRead, booksReadData }) => {
 
     getBookDetails();
   }, [selectedId]);
+
+  //for changing the title of browser tab
+  useEffect(() => {
+    if (!bookDetails) return;
+    document.title = `Book - ${bookDetails.title}`;
+    return () => {document.title = "My Books"};
+  }, [bookDetails]);
+
   const handleBookRead = (book) => {
     onBookRead({ ...book, userRating });
     toast.success("Book added to read list!");
