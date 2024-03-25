@@ -15,8 +15,6 @@ import useDebounce from "./hooks/useDebounce";
 import BookDetails from "./components/BookDetails";
 const key = import.meta.env.VITE_API_KEY;
 
-
-
 function App() {
   const [booksData, setBooksData] = useState([]);
   const [booksReadData, setBooksReadData] = useState([]);
@@ -46,7 +44,9 @@ function App() {
         setBooksData(formatBookResponse(response.data));
         setError("");
       } catch (error) {
-        setError(error?.message);
+        if (error.name !== "AbortError") {
+          setError(error?.message);
+        }
         console.error(error);
       } finally {
         setIsLoading(false);
@@ -57,6 +57,21 @@ function App() {
     fetchBooks();
     return () => controller.abort();
   }, [debouncedQuery]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code === "Escape") {
+        console.log("closing");
+        handleBack();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const handleSelectedId = (id) => {
     setSelectedId((selectedId) => (id === selectedId ? "" : id));
