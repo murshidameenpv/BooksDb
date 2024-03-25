@@ -14,6 +14,7 @@ const BookDetails = ({ selectedId, handleBack, onBookRead, booksReadData }) => {
   const [userRating, setUserRating] = useState(0);
   const isRated = booksReadData.map((book) => book.id).includes(selectedId);
   const ratedBook = booksReadData.find((book) => book.id === selectedId);
+  console.log(ratedBook);
   useEffect(() => {
     const getBookDetails = async () => {
       setBookDetails("");
@@ -72,7 +73,7 @@ const BookDetails = ({ selectedId, handleBack, onBookRead, booksReadData }) => {
           <StarRating />
           {isRated ? (
             <p className="italic font-semibold text-sm">
-              You Already Rated Rated This Book
+              You Already Rated ,Your Rating is :{ratedBook.userRating} Stars
             </p>
           ) : (
             <>

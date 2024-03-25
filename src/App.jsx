@@ -53,15 +53,19 @@ function App() {
     fetchBooks(debouncedQuery, setBooksData, setIsLoading, setError);
   }, [debouncedQuery]);
 
-  const handleSelectedId = (id) => { 
-    setSelectedId((selectedId)=>(id===selectedId) ? "" : id)
-  }; 
+  const handleSelectedId = (id) => {
+    setSelectedId((selectedId) => (id === selectedId ? "" : id));
+  };
   const handleBack = () => {
-   setSelectedId("")
-  }
+    setSelectedId("");
+  };
   const handleBookRead = (book) => {
     setBooksReadData((prev) => [...prev, book]);
-  }
+  };
+  const handleDeleteBookRead = (bookId) => {
+    let booksData = booksReadData.filter((book) => book.id !== bookId);
+    setBooksReadData(booksData);
+  };
   return (
     <>
       <Navbar booksData={booksData} query={query} setQuery={setQuery} />
@@ -87,7 +91,10 @@ function App() {
           ) : (
             <>
               <BooksReadSummary booksReadData={booksReadData} />
-              <BooksReadList booksReadData={booksReadData} />
+              <BooksReadList
+                booksReadData={booksReadData}
+                onDeleteBook={handleDeleteBookRead}
+              />
             </>
           )}
         </ListBox>
