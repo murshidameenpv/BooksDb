@@ -15,29 +15,7 @@ import useDebounce from "./hooks/useDebounce";
 import BookDetails from "./components/BookDetails";
 const key = import.meta.env.VITE_API_KEY;
 
-// Helper function to fetch books
-const fetchBooks = async (query, setBooksData, setIsLoading, setError) => {
-  if (!query || query.length < 3) {
-    setBooksData([]);
-    setIsLoading(false);
-    return;
-  }
-  setIsLoading(true);
-  try {
-    const response = await axios.get(
-      `https://www.googleapis.com/books/v1/volumes?q=${query}&key=${key}`
-    );
-    if (response.data && !response.data.items?.length)
-      throw new Error("No Books Data Available");
-    setBooksData(formatBookResponse(response.data));
-    setError("");
-  } catch (error) {
-    setError(error?.message);
-    console.error(error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+
 
 function App() {
   const [booksData, setBooksData] = useState([]);
@@ -47,10 +25,37 @@ function App() {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 200);
   const [selectedId, setSelectedId] = useState("");
+  const controller = new AbortController();
+  const { signal } = controller;
 
   useEffect(() => {
+    const fetchBooks = async () => {
+      if (!debouncedQuery || debouncedQuery.length < 3) {
+        setBooksData([]);
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `https://www.googleapis.com/books/v1/volumes?q=${debouncedQuery}&key=${key}`,
+          { signal }
+        );
+        if (response.data && !response.data.items?.length)
+          throw new Error("No Books Data Available");
+        setBooksData(formatBookResponse(response.data));
+        setError("");
+      } catch (error) {
+        setError(error?.message);
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     setError("");
-    fetchBooks(debouncedQuery, setBooksData, setIsLoading, setError);
+    fetchBooks();
+    return () => controller.abort();
   }, [debouncedQuery]);
 
   const handleSelectedId = (id) => {
